@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Lost Save Files — Python File Writing Adventure</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+:root{--stone:#293044;--stone-light:#4d5265;--deep:#10131f;--panel:#202333;--wood:#493025;--gold:#f4c66c;--paper:#e9d4a0;--ink:#392817;--cyan:#78d5e7;--green:#b3e59b;--red:#ff9b83}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#10131b;color:#e9dfca;font-family:VT323,monospace;font-size:22px;min-height:100vh}button,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}button:focus-visible,textarea:focus-visible{outline:3px solid #9feaff;outline-offset:3px} .world{min-height:100vh;position:relative;overflow:hidden;background:linear-gradient(180deg,#151728 0,#202234 45%,#10131b 100%)}.world:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;background-image:repeating-linear-gradient(0deg,transparent 0 41px,#0a0d15 42px 44px,transparent 45px 86px),repeating-linear-gradient(90deg,transparent 0 105px,#0d111b 106px 109px,transparent 110px 218px);background-size:218px 88px,218px 88px}.world:after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 5% 19%,#ffac3b20,transparent 28%),radial-gradient(ellipse at 95% 19%,#ffac3b20,transparent 28%)}.content{position:relative;z-index:1;max-width:1420px;margin:auto;padding:22px 24px 45px}.header{text-align:center;margin:0 auto 20px;position:relative;padding:16px 90px 0}.eyebrow{font-size:15px;letter-spacing:4px;color:#d9a65c}h1{font-family:'Press Start 2P',monospace;font-size:clamp(18px,2.4vw,31px);line-height:1.5;margin:12px 0;text-shadow:4px 4px #4d2b25;color:var(--gold)}.subtitle{font-size:25px;color:#c8c1b5;margin:0}.torch{position:absolute;top:0;width:30px;height:90px}.torch.left{left:10px}.torch.right{right:10px}.torch .fire{position:absolute;top:0;left:5px;width:21px;height:38px;background:#ffdc65;box-shadow:0 0 0 4px #e88a2b,0 0 23px 14px #ff962d6a;clip-path:polygon(47% 0,75% 25%,90% 63%,65% 100%,18% 100%,7% 53%);animation:flicker .52s steps(2) infinite alternate}.torch .stem{position:absolute;top:44px;left:11px;width:12px;height:35px;background:linear-gradient(90deg,#7c5134 50%,#4e3129 50%);box-shadow:0 0 0 3px #171722}@keyframes flicker{from{transform:scaleY(.86) translateY(3px);filter:hue-rotate(-10deg)}to{transform:scaleY(1.12);filter:hue-rotate(12deg)}}.topline{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0}.status{display:flex;align-items:center;gap:10px;color:#e4d8bd}.stars{font-size:26px;color:var(--gold)}.pill{border:2px solid #686075;padding:5px 12px;background:#29283a;box-shadow:3px 3px #0b0d16}.progress{height:15px;border:3px solid #78708b;background:#0e111d;flex:1;min-width:140px;max-width:360px}.progress>div{height:100%;width:0;background:repeating-linear-gradient(90deg,#c9a059 0 16px,#f8d77f 16px 32px);transition:width .3s}.btn{background:#403544;border:3px solid #777086;color:#fff1d1;padding:7px 15px;box-shadow:4px 4px #0e1019;min-height:40px;line-height:1.1}.btn:hover:not(:disabled){filter:brightness(1.18);transform:translate(-1px,-1px)}.btn.primary{background:#7b482d;border-color:#e2a967;color:#fff0ca}.btn.teal{background:#225963;border-color:#77c7c9}.btn.small{padding:4px 11px;font-size:19px;min-height:32px}.btn.danger{border-color:#a76a60;background:#562e35}.mission-banner{border:5px solid #79758b;background:linear-gradient(135deg,#2c2b3a,#191d2c);box-shadow:inset 0 0 0 3px #121523,6px 6px #080b12;padding:16px 20px;margin-bottom:16px}.mission-kicker{color:var(--gold);font-family:'Press Start 2P';font-size:10px;line-height:1.8}.mission-banner h2{font-size:33px;color:#fbe6b5;margin:4px 0 6px}.mission-banner p{margin:0;color:#d9d4d0;font-size:23px;line-height:1.2}.workspace{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);gap:17px;align-items:stretch}.panel{border:5px solid #5e6177;background:#202434;box-shadow:inset 0 0 0 3px #111624,6px 6px #0b0d15;min-width:0}.panel-header{height:45px;background:linear-gradient(90deg,#363549,#25283a);border-bottom:3px solid #777083;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3px 12px}.panel-header .name{font-family:'Press Start 2P';font-size:10px;line-height:1.7;color:#ffe1a0}.editor{width:100%;min-height:280px;resize:vertical;border:0;outline:none;padding:15px 16px;font:17px/1.6 Consolas,'Courier New',monospace;color:#d6f3ee;background:#111727;tab-size:4;white-space:pre;display:block}.editor::selection{background:#a67c4370}.editor-foot{padding:9px 12px;background:#1b2030;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.console{background:#0d1420;border-top:3px solid #3c4354;color:#c9ddcf;padding:10px 13px;min-height:82px;max-height:135px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.5 Consolas,monospace}.file-area{display:grid;grid-template-columns:140px minmax(0,1fr);min-height:340px}.file-list{background:#171d2a;border-right:3px solid #51566a;padding:10px 6px;min-width:0}.file-list strong{font-size:18px;display:block;color:#bbb3a7;margin:0 6px 8px}.file-tab{display:block;width:100%;background:none;color:#d6d6c6;border:2px solid transparent;text-align:left;padding:5px 4px;font-size:17px;overflow-wrap:anywhere}.file-tab:hover{background:#333447}.file-tab.active{border-color:#caac67;background:#474137;color:#ffdf91}.paper-wrap{padding:15px;background:repeating-linear-gradient(90deg,#252c3b 0 24px,#2a3141 24px 48px);display:flex;flex-direction:column;min-width:0}.paper{background:#e8d6aa;color:#30271f;min-height:270px;box-shadow:inset 0 0 0 5px #c2a975,5px 5px #10141b;padding:17px 18px;flex:1}.paper h3{margin:0 0 10px;color:#5f4428;font-size:24px;border-bottom:2px dashed #987e55;overflow-wrap:anywhere}.paper pre{font:19px/1.42 VT323,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.paper .empty{font-style:italic;color:#8d795c}.file-tab.missing{color:#ffb7a0;border-left:3px dashed #cf796a}.file-tab.missing.active{background:#573b3b;border-color:#db8d70;color:#ffe1b3}.file-presence{display:inline-block;padding:3px 8px;margin:0 0 12px;border:2px solid #937954;font-size:18px;font-weight:bold}.file-presence.missing{background:#682e2b;color:#fff1d7;border-color:#bd6b5b}.file-presence.exists{background:#d9e4ae;color:#39502d;border-color:#8ba66b}.empty-file-notice{border:3px dashed #b5755e;background:#f6e3bb;padding:14px;margin-top:8px;color:#6f3028;font-size:22px;line-height:1.1}.empty-file-notice strong{display:block;font-size:26px;margin-bottom:7px}.changed{background:#b6dc91aa}.removed{background:#f1a89a8a;text-decoration:line-through}.caption{font-size:18px;color:#aabac4;margin-top:10px;line-height:1.15}.learning{margin-top:20px;display:grid;grid-template-columns:minmax(0,1fr) 305px;gap:17px}.quiz-panel{border:5px solid #8a765d;box-shadow:inset 0 0 0 3px #2f211a,6px 6px #0b0d15;background:#312b31;padding:18px;min-height:170px}.section-title{font-family:'Press Start 2P';font-size:12px;line-height:1.7;color:#f3cb7b;margin:0 0 11px}.quiz-panel p{font-size:23px;line-height:1.13;margin:5px 0 12px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{border:2px solid #777084;background:#202434;color:#e9e2d6;text-align:left;padding:9px 12px;font-size:21px;min-height:55px;line-height:1.1}.choice:hover,.choice.selected{border-color:#e8c47b;background:#4a3d3c}.choice.wrong{border-color:#d88475}.explain{border:3px solid #a89d70;background:#242f33;padding:12px 14px;margin-top:14px;color:#e5ead9}.explain h4{color:#ddedb9;font-size:24px;margin:0 0 6px}.explain p{margin:0;font-size:21px;line-height:1.18}.feedback{color:#f7b3a3;margin-top:10px}.explain-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}.pipbox{border:5px solid #516f80;box-shadow:inset 0 0 0 3px #101e2a,6px 6px #0b0d15;background:#1a2d3b;padding:14px}.piphead{display:flex;align-items:center;gap:10px}.pip-avatar{width:66px;height:67px;flex:none;position:relative;image-rendering:pixelated;animation:bob 2.6s ease-in-out infinite}.pip-avatar:before{content:"";position:absolute;left:16px;top:10px;width:34px;height:43px;background:#a2f4f0;box-shadow:inset -7px -5px #4aa1b4,0 0 0 5px #376982,0 0 15px 4px #71d8ed60;clip-path:polygon(25% 0,75% 0,100% 30%,100% 90%,75% 75%,50% 100%,25% 75%,0 90%,0 30%)}.pip-avatar:after{content:"•  •";position:absolute;left:21px;top:23px;color:#1e5367;font-size:23px;letter-spacing:2px}@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}.pipbox h3{font-size:27px;color:#b8f0f2;margin:0}.pipbox p{font-size:20px;line-height:1.13;margin:7px 0 12px;color:#d4e7e6}.hint-bubble{background:#e9e0bd;color:#302b28;padding:12px 14px;position:relative;border:3px solid #77b6c1;font-size:21px;line-height:1.13;margin:14px 0}.hint-bubble:before{content:"";position:absolute;top:-13px;left:22px;border-bottom:11px solid #77b6c1;border-left:11px solid transparent;border-right:11px solid transparent}.hint-row{display:flex;gap:5px;flex-wrap:wrap}.hint-row .btn{flex:1;padding:3px 4px}.muted{color:#b4b0b5}.note-empty{font-size:21px;color:#d7c8ad}.overlay{position:fixed;inset:0;z-index:20;background:#080b12d9;display:flex;justify-content:center;align-items:center;padding:14px}.modal{max-width:750px;max-height:90vh;overflow:auto;width:100%;background:#232b38;border:6px solid #a99169;box-shadow:0 0 0 5px #22202a,10px 10px #0b0b10;padding:22px}.modal h2{font-family:'Press Start 2P';font-size:16px;line-height:1.7;color:#ffe0a3}.modal p,.modal li{font-size:23px;line-height:1.2}.modal .close{float:right}.notebook-entry{border:2px solid #73716b;padding:12px;margin:12px 0;background:#303444}.notebook-entry strong{color:#f2d495}.modal code,.explain code{color:#9ce3e6}.final{text-align:center;background:radial-gradient(ellipse at center,#374a50,#131727 65%);border:5px solid #d7b66f;padding:35px 15px}.final .codeword{font-family:'Press Start 2P';font-size:clamp(17px,3.2vw,30px);padding:16px;background:#dcbf85;color:#43301d;border:5px solid #8f6e39;letter-spacing:3px;display:inline-block;margin:16px}.final h2{color:#f4d99a}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:1000px){.learning{grid-template-columns:1fr}.pipbox{max-width:none}}@media(max-width:780px){.workspace{grid-template-columns:1fr}.header{padding:10px 40px}.torch{transform:scale(.65);transform-origin:top}.choices{grid-template-columns:1fr}.content{padding:12px 12px 35px}.file-area{grid-template-columns:120px 1fr}.editor{min-height:230px}}
+.shelf-placeholder{display:flex;align-items:center;justify-content:center;min-height:205px;text-align:center;color:#6b5237;font-size:30px;line-height:1.15;padding:12px;font-style:italic}.shelf-instruction{margin:3px 5px 15px;padding:10px 8px;border:2px solid #9f8660;background:#383326;color:#f4deab;font-size:19px;line-height:1.18;text-align:left;box-shadow:3px 3px #0d111b}.shelf-instruction:before{content:"✦ ARCHIVIST’S NOTE";display:block;font-size:15px;color:#f2bc6a;margin-bottom:5px;letter-spacing:.4px}.mode-legend{padding:13px 15px;background:#282335;border-top:3px solid #6e6070}.legend-head{display:block;color:#f2c878;font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:12px}.mode-runes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.mode-rune{border:2px solid #746b74;background:#171b29;padding:7px;min-height:67px;color:#ddd3be}.mode-rune strong{display:block;font:22px Consolas,monospace;color:#ffdc94}.mode-rune span{font-size:17px;line-height:1.05;display:block}.mode-rune.unlocked{border-color:#e5be65;background:#3c342b}.mode-caption{color:#c1b5aa;font-size:17px;margin-top:8px}.mode-question{background:#212b40;border:3px solid #bba377;padding:14px;margin-top:8px}.mode-question strong{color:#f9d996}.mode-question p{margin:8px 0}.mode-answers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mode-answer{font:24px Consolas,monospace;border:3px solid #7c8298;background:#192032;color:#fff0cb;padding:10px}.mode-answer:hover{border-color:#f6cc73}.mode-answer:focus-visible{outline:3px solid #8ee9ef}.mode-explanation{border-left:5px solid #e7bd67;padding:10px;background:#3a342d;margin:12px 0;font-size:21px;color:#f5e7cc}@media(max-width:550px){.mode-answers{grid-template-columns:repeat(3,1fr)}}
+.archive-wisdom{margin:15px 0 4px;padding:13px 16px;border:3px solid #e2bb76;background:linear-gradient(135deg,#453523,#2c2630);box-shadow:inset 0 0 0 2px #654d30;color:#f6e5bf}.archive-wisdom strong{display:block;color:#ffe19c;font-size:23px}.archive-wisdom p{margin:9px 0 0!important;line-height:1.22!important;font-size:21px!important}.archive-wisdom b{color:#ffe69f}
+.wisdom-lab{margin:18px 0;padding:17px;border:4px solid #b99a62;background:linear-gradient(135deg,#473722,#242834);box-shadow:inset 0 0 0 3px #211c20;color:#f7e8c8}
+.wisdom-lab h4{font:12px/1.8 'Press Start 2P',monospace;color:#ffde93;margin:0 0 12px}
+.wisdom-lab .wisdom-intro{font-size:21px;line-height:1.2;margin:0 0 12px}
+.wisdom-steps{display:flex;gap:7px;margin:10px 0 14px;flex-wrap:wrap}
+.wisdom-step{flex:1;min-width:100px;border:2px solid #756b62;background:#282734;color:#bdb8b1;padding:9px 4px;text-align:center;font-size:19px;line-height:1.1}
+.wisdom-step.on{color:#fff3c7;border-color:#ebc67e;background:#655136}
+.wisdom-step.done{border-color:#81b89b;color:#b8efcb}
+.wisdom-board{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wisdom-file{border:3px solid #907956;background:#e9d8ab;color:#30261e;padding:10px;min-width:0}
+.wisdom-file.ram{background:#1c3441;border-color:#5eacb9;color:#dcf7f5}
+.wisdom-file strong{font-size:21px;display:block;border-bottom:2px dashed currentColor;margin-bottom:8px}
+.wisdom-file pre{white-space:pre-wrap;overflow-wrap:anywhere;font:17px/1.5 Consolas,monospace;margin:0}
+.wisdom-file .deleted{opacity:.6;text-decoration:line-through;color:#b75445}
+.wisdom-code{background:#101827;color:#bff3df;border:2px solid #55616a;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.55 Consolas,monospace;margin-top:12px}
+.wisdom-insight{font-size:21px;line-height:1.2;margin:12px 0;background:#202b31;border-left:5px solid #d8b976;padding:11px}
+.wisdom-insight b{color:#ffe2a5}
+.wisdom-actions{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.wisdom-complete{color:#bff1a5;font-size:20px}
+@media(max-width:500px){.wisdom-board{grid-template-columns:1fr}.wisdom-steps{flex-direction:column}}
+</style>
+</head>
+<body><div class="world"><main class="content">
+<header class="header"><div class="torch left" aria-hidden="true"><div class="fire"></div><div class="stem"></div></div><div class="torch right" aria-hidden="true"><div class="fire"></div><div class="stem"></div></div><div class="eyebrow">THE GUILD OF THE EMBER KEEP PRESENTS</div><h1>THE LOST SAVE FILES</h1><p class="subtitle">A Python File Writing Adventure • Castle Archive</p></header>
+<div class="topline"><div class="status"><span class="stars">✦</span><span id="mission-counter">MISSION 1 OF 6</span></div><div class="progress" aria-label="Mission progress"><div id="progress-fill"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" id="notebookBtn">📖 Archivist's Notebook</button><button class="btn small" id="resetBtn">↺ Reset progress</button></div></div>
+<section class="mission-banner"><div class="mission-kicker" id="mission-type">CHAPTER ONE • THE ARCHIVE</div><h2 id="mission-title">The First Record</h2><p id="mission-desc"></p></section>
+<div class="workspace"><section class="panel" aria-label="Python editor"><div class="panel-header"><span class="name">✎ PYTHON SCROLL</span><span class="muted" id="runtime-status" style="font-size:18px">Preparing the magic...</span></div><textarea class="editor" id="code" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Python code editor"></textarea><div class="editor-foot"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="runBtn" disabled>▶ RUN CODE</button><button class="btn small" id="restoreCodeBtn">↺ Starter code</button></div><span class="muted" id="runCount">Runs: 0</span></div><div class="console" id="console" aria-live="polite">Loading Python engine...</div><div class="mode-legend"><span class="legend-head">FILE MODE RUNES</span><div id="modeRunes" class="mode-runes"></div><div class="mode-caption">Discover what each letter means by experimenting and answering.</div></div></section>
+<section class="panel" aria-label="Virtual archive files"><div class="panel-header"><span class="name">▤ THE SCROLL ARCHIVE</span><span class="muted" id="file-status" style="font-size:18px">Virtual files</span></div><div class="file-area"><nav class="file-list" id="fileList" aria-label="Files"><strong>SCROLLS</strong></nav><div class="paper-wrap"><div class="paper"><h3 id="file-name">Select a scroll</h3><div id="file-presence" class="file-presence" aria-live="polite"></div><pre id="file-content"></pre></div><div class="caption" id="file-caption">Files change when you run your Python code.</div></div></div></section></div>
+<div class="learning"><section class="quiz-panel" id="quizPanel"><h3 class="section-title">✦ THE ARCHIVIST'S OBSERVATION</h3><div id="quizBody"><p>First, run the Python code and inspect the scroll archive. Then tell Pip what you observed.</p></div></section><aside class="pipbox"><div class="piphead"><div class="pip-avatar" aria-hidden="true"></div><div><h3>Pip, the Archive Spirit</h3><span class="muted">Your magical study companion</span></div></div><p id="pipLine">"Every spell leaves a trace. Look closely at what changes!"</p><div class="hint-row"><button class="btn small" data-hint="1">Hint 1</button><button class="btn small" data-hint="2">Hint 2</button><button class="btn small" data-hint="3">Hint 3</button></div><div id="hintText" aria-live="polite"></div></aside></div>
+<footer style="text-align:center;margin-top:28px;color:#a6a5a3;font-size:19px">Week 11 · Python File Writing · Your progress is saved in this browser · Practice mode works offline; full Python loads when available</footer>
+</main></div>
+<div id="modalRoot"></div>
+
+<script>
+(()=>{'use strict';
+const KEY='castle_archive_file_writing_modes_v2';
+const defaults=()=>({mission:0,completed:[],codes:{},files:{'heroes.txt':'Batman\nWonder Woman\nIron Man\n','villains.txt':'Joker\nLoki\nHela\n','weapons.txt':'Wooden SwordIron Dagger','battle_history.txt':'Batman defeated Joker\n'},selected:null,runs:{},notes:[],hints:{},history:[],experiment:null,wisdomStep:0,wisdomDone:false});
+const missions=[
+ {title:'The First Record',chapter:'CHAPTER ONE • A NEW SCROLL',desc:'The guild needs its own official record. Before running the code, carefully examine which scrolls are on the shelf to your right. Then run the code and see what changes in the archive.',target:'guild.txt',starter:'with open("guild.txt", "w", encoding="utf-8") as file:\n    file.write("The Ember Guild\\n")',validate:(f)=>!!f['guild.txt']&&f['guild.txt'].includes('The Ember Guild'),hints:['What happens when you open a filename that does not exist in writing mode?','The mode "w" lets Python create a new file or replace an existing one.','Try open("guild.txt", "w") and write("The Ember Guild\\n").'],lesson:'FILE MODE FOCUS — w = WRITE. Mode "w" opens a file for writing. If the file does not exist, Python creates it. The write() method puts text inside. Using with closes the file automatically.'},
+ {title:'The Missing Hero',chapter:'CHAPTER TWO • A HERO RETURNS',desc:'Three heroes are already registered. Add Thor to heroes.txt without deleting Batman, Wonder Woman, or Iron Man.',target:'heroes.txt',starter:'with open("heroes.txt", "a", encoding="utf-8") as file:\n    file.write("Thor\\n")',validate:(f)=>['Batman','Wonder Woman','Iron Man','Thor'].every(n=>f['heroes.txt']?.split('\n').includes(n)),hints:['Does your file still contain all three original heroes?','Writing mode "w" replaces text. Append mode "a" preserves existing content.','Use mode "a" and file.write("Thor\\n").'],lesson:'FILE MODE FOCUS — a = APPEND. Mode "a" means append. Python keeps the previous content and writes at the end. The newline character \\n separates entries so each hero is on a new line.'},
+ {title:'The Broken Weapon Registry',chapter:'CHAPTER THREE • THE MISSING LINE BREAKS',desc:'The blacksmith wrote two weapon names together! Rewrite weapons.txt so Wooden Sword, Iron Dagger, and Magic Wand each occupy their own line.',target:'weapons.txt',starter:'with open("weapons.txt", "w", encoding="utf-8") as file:\n    file.write("Wooden Sword\\n")\n    file.write("Iron Dagger\\n")\n    file.write("Magic Wand\\n")',validate:(f)=>f['weapons.txt']?.trim().split('\n').map(x=>x.trim()).join('|')==='Wooden Sword|Iron Dagger|Magic Wand',hints:['Look at where one weapon name ends and the next begins.','A file does not add new lines automatically when write() runs.','Add \\n to each weapon string and use "w" to repair the whole file.'],lesson:'FILE MODE FOCUS — w = WRITE. The write() method does not automatically add a newline. The escape sequence \\n starts a new line. Mode "w" replaces the broken text with your repaired list.'},
+ {title:'The Battle Chronicle',chapter:'CHAPTER FOUR • SAVE THE RESULTS',desc:'The chronicle already contains one victory. Record that Thor defeated Loki for 17 damage, keeping the previous battle too.',target:'battle_history.txt',starter:'hero = "Thor"\nvillain = "Loki"\ndamage = 17\n\nwith open("battle_history.txt", "a", encoding="utf-8") as file:\n    file.write(hero + " defeated " + villain + " for " + str(damage) + " damage\\n")',validate:(f)=>f['battle_history.txt']?.includes('Batman defeated Joker')&&f['battle_history.txt']?.includes('Thor defeated Loki for 17 damage'),hints:['The previous battle record must stay in the file.','Combine text and variables to build a new line. Numbers must become strings.','Use mode "a" and convert damage with str(damage).'],lesson:'FILE MODE FOCUS — a = APPEND. You can create the text to save using variables. file.write() expects a string, so str(damage) converts an integer into text. Append mode keeps the old battle history.'},
+ {title:'The Save Crystal',chapter:'CHAPTER FIVE • READ YOUR OWN SAVE',desc:'Create save.txt containing a character name, weapon, and health separated by |. Then read the save back and print it to prove your record survived.',target:'save.txt',starter:'name = "Thor"\nweapon = "Magic Wand"\nhealth = 83\n\nwith open("save.txt", "w", encoding="utf-8") as file:\n    file.write(name + "|" + weapon + "|" + str(health) + "\\n")\n\nwith open("save.txt", "r", encoding="utf-8") as file:\n    saved_data = file.read()\n\nprint(saved_data)',validate:(f,out)=>f['save.txt']?.trim()==='Thor|Magic Wand|83'&&out.includes('Thor|Magic Wand|83'),hints:['A save must exist on disk before you can read its contents.','Use "w" to save, then "r" and read() to retrieve the data.','Write name + "|" + weapon + "|" + str(health), then print(file.read()).'],lesson:'FILE MODE FOCUS — r = READ. Mode "r" allows reading but never creates a missing file or saves any changes. This combines file writing with file reading. Write the data to save.txt, close it, then open it in read mode. The | symbols separate values in our simple text format. Real apps often use structured formats such as JSON, but this is enough for our first save file.'},
+ {title:'The Master Archivist',chapter:'FINAL CHAPTER • YOUR OWN SAVE FUNCTION',desc:'Create a reusable save_battle() function. Call it twice to add two NEW records to the battle_history.txt scroll: Superman defeated Hela, and Iron Man defeated Loki.',target:'battle_history.txt',starter:'def save_battle(hero, villain):\n    with open("battle_history.txt", "a", encoding="utf-8") as file:\n        file.write(hero + " defeated " + villain + "\\n")\n\nsave_battle("Superman", "Hela")\nsave_battle("Iron Man", "Loki")',validate:(f)=>f['battle_history.txt']?.split('\n').includes('Superman defeated Hela')&&f['battle_history.txt']?.split('\n').includes('Iron Man defeated Loki')&&f['battle_history.txt']?.includes('Batman defeated Joker'),hints:['A function can write to a file whenever you call it.','Use def with two parameters, then write inside the function.','Define save_battle(hero, villain), open in "a" mode, and call it twice.'],lesson:'FILE MODE FOCUS — a = APPEND. Functions make file writing reusable. Every call to save_battle() opens the same file in append mode and adds a new battle record. Earlier records stay intact. Your archive can now grow with each victory!'}
+];
+const observe={created:{q:'What happened to the scroll when your Python code ran?',opts:['A new file appeared in the archive.','All existing files were deleted.','The text appeared only in the console.','Python renamed an existing file.'],answer:0,why:'Python created a new file because the chosen filename did not exist before this run. Opening a missing file with "w" or "a" creates it.'},appended:{q:'What happened to the existing file when your code ran?',opts:['The previous text was replaced completely.','New text was added after the previous contents.','The file was deleted and not recreated.','The program printed the text but did not save it.'],answer:1,why:'The old content stayed and new text was added at the end. This is what append mode ("a") is designed to do.'},overwritten:{q:'What happened to the contents of the file?',opts:['Only the console output changed.','The old text was kept and new text was appended.','The existing content was replaced by different content.','A second file with the same name appeared.'],answer:2,why:'The existing file changed without keeping all its previous text at the beginning. Opening an existing file with mode "w" clears its old content before new text is written.'},unchanged:{q:'What happened to the selected file after this run?',opts:['Its content remained unchanged.','It was renamed by Python.','It was removed from the archive.','New text was appended to it.'],answer:0,why:'The selected file looks the same as before. Your code may have written to a different file, written identical content, or only read data. Check the file explorer and the console.'},error:{q:'What happened when Python tried to execute the code?',opts:['The file was saved successfully.','The program raised an error and did not complete normally.','All files were permanently deleted.','The selected file was automatically renamed.'],answer:1,why:'Python reported an error. Read the console output to find which operation failed. Any changes made before the error may still be present.'}};
+
+// Every observation is followed by a separate question about the file mode.
+// The explanation remains locked until the learner identifies the mode.
+const modeChallenges=[
+ {q:'You opened a filename that did not exist. Which mode created the new file and allowed writing?',answer:'w',why:'w = write. It creates a missing file, but clears any existing file of the same name.'},
+ {q:'The original heroes stayed in the file and Thor was added at the end. Which mode is meant for this?',answer:'a',why:'a = append. It adds text at the end without clearing existing content. It also creates a missing file.'},
+ {q:'You replaced the broken weapon registry with a corrected version. Which mode resets old content first?',answer:'w',why:'w = write. Opening an existing file in w mode immediately truncates it, then write() saves the new content.'},
+ {q:'The old battle history survived while another result was saved. Which mode should a battle log use?',answer:'a',why:'a = append. Logs should normally keep earlier entries and add new ones at the end.'},
+ {q:'After saving a character, you opened save.txt again only to retrieve its contents. Which mode does that?',answer:'r',why:'r = read. It reads the existing file and does not change it. A missing file causes FileNotFoundError.'},
+ {q:'Your function saves a new battle each time without erasing previous victories. Which mode makes this possible?',answer:'a',why:'a = append. Each function call adds a fresh record to the existing history.'}
+];
+const modeInfo={r:'READ — the file must already exist; reading does not change its contents.',w:'WRITE — creates a missing file; clears existing content before writing.',a:'APPEND — creates a missing file; preserves existing content and adds at the end.'};
+
+let state;try{state=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){state=defaults()};state.mission=Math.max(0,Math.min(6,Number(state.mission)||0));if(!state.files||typeof state.files!=='object')state.files=defaults().files;
+const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('Could not save progress',e)}};
+let py=null, busy=false, transient=null, offlineMode=false;
+function mission(){return missions[Math.min(state.mission,5)]}
+function render(){if(state.mission>=6){renderFinal();return} $('mission-counter').textContent='MISSION '+(state.mission+1)+' OF 6';$('progress-fill').style.width=(state.completed.length/6*100)+'%';$('mission-type').textContent=mission().chapter;$('mission-title').textContent=mission().title;$('mission-desc').textContent=mission().desc;$('code').value=state.codes[state.mission]??mission().starter;$('runCount').textContent='Runs: '+(state.runs[state.mission]||0);if(state.mission===0&&!state.files['guild.txt']&&!(state.runs[0]||0))state.selected=null;renderFiles();renderQuiz();renderHint();renderModes();$('runBtn').disabled=(!py&&!offlineMode)||busy;$('runtime-status').textContent=offlineMode?'Practice mode · offline':py?'Python ready':'Loading Python...';}
+function renderFiles(){
+ const list=$('fileList');
+ list.innerHTML='<strong>SCROLL SHELF</strong>';
+ const names=Object.keys(state.files).sort();
+ names.forEach(name=>{
+   const btn=document.createElement('button');
+   btn.className='file-tab'+(state.selected===name?' active':'');
+   btn.textContent='▤ '+name;
+   btn.onclick=()=>{state.selected=name;save();renderFiles()};
+   list.append(btn);
+ });
+ const name=state.selected && Object.prototype.hasOwnProperty.call(state.files,state.selected)?state.selected:null;
+ const pre=$('file-content');
+ const heading=$('file-name');
+ const presence=$('file-presence');
+ pre.innerHTML='';
+ if(name===null){
+   heading.textContent='';
+   heading.style.display='none';
+   presence.style.display='none';
+   pre.innerHTML='<span class="shelf-placeholder">Look closely at the files on this shelf.</span>';
+   $('file-caption').textContent='Choose a scroll to inspect its contents.';
+ }else{
+   heading.style.display='';
+   heading.textContent=name;
+   presence.style.display='inline-block';
+   presence.className='file-presence exists';
+   presence.textContent='ARCHIVE SCROLL';
+   const v=state.files[name];
+   if(v==='')pre.innerHTML='<span class="empty">This scroll is empty.</span>';
+   else{
+     const previous=transient?.before?.[name];
+     if(previous!==undefined&&v.startsWith(previous)&&v.length>previous.length){
+       pre.append(document.createTextNode(previous));
+       const mark=document.createElement('span');mark.className='changed';mark.textContent=v.slice(previous.length);pre.append(mark);
+     }else if(previous!==undefined&&v!==previous){
+       const mark=document.createElement('span');mark.className='changed';mark.textContent=v;pre.append(mark);
+     }else pre.textContent=v;
+   }
+   $('file-caption').textContent=transient&&transient.before?.[name]===undefined?'A new scroll has appeared on the shelf!':transient?'Colored text shows newly written or changed content.':'Inspect the scrolls before running your code.';
+ }
+ $('file-status').textContent=names.length+' scrolls';
+}
+function renderModes(){
+ const el=$('modeRunes');if(!el)return;
+ const learned=new Set((state.notes||[]).map(i=>modeChallenges[i]?.answer).filter(Boolean));
+ el.innerHTML=['r','w','a'].map(mode=>'<div class="mode-rune '+(learned.has(mode)?'unlocked':'')+'"><strong>"'+mode+'"</strong><span>'+(learned.has(mode)?esc(modeInfo[mode]):'??? · undiscovered')+'</span></div>').join('');
+}
+function renderHint(){
+ const level=Math.min(3,Math.max(0,Number(state.hints[state.mission]||0)));
+ const box=$('hintText');
+ if(!level){box.innerHTML='';return;}
+ box.innerHTML='<div class="hint-bubble"><strong>Pip whispers (hint '+level+'/3):</strong><div>'+esc(mission().hints[level-1])+'</div></div>';
+}
+function renderQuiz(){
+ const body=$('quizBody');
+ if(!transient){body.innerHTML='<p>First, run the Python code and inspect the archive. Then tell Pip exactly what you observed.</p><p class="muted">After your observation, you will unlock a question about the file mode: r, w, or a.</p>';return}
+ const o=observe[transient.kind];let html='';
+ if(!transient.observed){
+  html='<p>'+esc(o.q)+'</p><div class="choices">';
+  o.opts.forEach((t,i)=>{const selected=transient.selected===i;html+='<button class="choice '+(selected?'selected ':'')+(transient.wrong===i?'wrong':'')+'" data-choice="'+i+'">'+String.fromCharCode(65+i)+'. '+esc(t)+'</button>'});html+='</div>';
+  if(transient.wrong!==null&&transient.wrong!==undefined)html+='<p class="feedback">Not quite. Compare the files before and after running the code. Try another answer.</p>';
+  html+='<div class="explain-actions"><button class="btn teal" id="checkBtn" '+(transient.selected===null?'disabled':'')+'>CHECK MY OBSERVATION</button></div>';
+ }else if(!transient.answered){
+  const m=modeChallenges[state.mission];
+  html='<div class="mode-question"><strong>✦ DECODE THE FILE MODE</strong><p>'+esc(m.q)+'</p><div class="mode-answers">'+['r','w','a'].map(v=>'<button class="mode-answer" data-mode="'+v+'">"'+v+'"</button>').join('')+'</div>';
+  if(transient.modeWrong)html+='<p class="feedback">Not quite! Think about what you saw on the file shelf. Did Python read, replace, or add data?</p>';
+  html+='</div>';
+ }else{
+  const m=modeChallenges[state.mission];
+  html='<div class="explain"><h4>✦ What just happened?</h4><p>'+esc(o.why)+'</p><div class="mode-explanation"><strong>THE FILE MODE:</strong> '+esc(m.why)+'</div>';
+  if(transient.success&&state.mission===2)html+=wisdomMarkup(state.wisdomStep||0);
+  if(transient.success)html+='<p style="margin-top:9px;color:#bcf0b3">Mission complete! '+esc(mission().lesson)+'</p><div class="explain-actions"><button class="btn primary" id="nextMission" '+(state.mission===2&&!state.wisdomDone?'disabled title="Explore all three stages first"':'')+'>'+(state.mission===5?'UNLOCK THE ARCHIVE ✦':'NEXT MISSION →')+'</button></div>';
+  else html+='<p style="margin-top:9px;color:#f4c0a3">Good observation! But the guild task is not complete yet. '+esc(mission().desc)+'</p><div class="explain-actions"><button class="btn teal" id="retryBtn">Try another experiment</button></div>';
+  html+='</div>';
+ }
+ body.innerHTML=html;
+ body.querySelectorAll('[data-choice]').forEach(btn=>btn.onclick=()=>{if(transient.answered)return;transient.selected=Number(btn.dataset.choice);transient.wrong=null;renderQuiz()});
+ body.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>checkMode(btn.dataset.mode));
+ $('checkBtn')?.addEventListener('click',checkObservation);
+ $('nextMission')?.addEventListener('click',nextMission);
+ $('retryBtn')?.addEventListener('click',()=>{transient=null;renderQuiz()});
+ bindWisdom(body,false);
+}
+// Interactive three-stage explanation. File changes happen in the student's Python experiment;
+// this visual lesson illustrates a typical separate read/modify/rewrite workflow.
+const wisdomStages=[
+ {title:'READ',sub:'Copy the contents into RAM',code:'with open("heroes.txt", "r") as file:\n    heroes = file.readlines()',explain:'<b>"r" reads.</b> Python loads the existing lines into a list in RAM. The file on disk has not changed.',file:['Batman','Superman','Thor'],ram:['Batman','Superman','Thor']},
+ {title:'MODIFY',sub:'Edit the list in RAM',code:'heroes.remove("Batman\\n")',explain:'<b>The list changes, but the file does not.</b> Batman is now absent from the list in RAM, yet the original scroll on disk still contains Batman.',file:['Batman','Superman','Thor'],ram:['Superman','Thor']},
+ {title:'REWRITE',sub:'Save the updated list',code:'with open("heroes.txt", "w") as file:\n    file.writelines(heroes)',explain:'<b>"w" clears the old file when it is opened.</b> Then writelines() writes the updated list. The file on disk now matches RAM. The "w" mode itself never reads or copies the old file.',file:['Superman','Thor'],ram:['Superman','Thor']}
+];
+function wisdomMarkup(step){
+ step=Math.max(0,Math.min(2,Number(step)||0));
+ const d=wisdomStages[step];
+ const lineList=(items)=>items.map(n=>esc(n)).join('\n');
+ return '<section class="wisdom-lab" aria-label="Interactive archivist wisdom"><h4>📜 THE ARCHIVIST’S WISDOM</h4><p class="wisdom-intro"><strong>THE SECRET OF CHANGING RECORDS</strong><br>How can we remove a hero from an existing text file? Follow the data through three stages.</p><div class="wisdom-steps">'+wisdomStages.map((x,i)=>'<div class="wisdom-step '+(i===step?'on':i<step?'done':'')+'">'+(i+1)+'. '+x.title+'</div>').join('')+'</div><p><strong>'+esc(d.title)+' — '+esc(d.sub)+'</strong></p><div class="wisdom-board"><div class="wisdom-file"><strong>📜 Disk: heroes.txt</strong><pre>'+lineList(d.file)+'</pre></div><div class="wisdom-file ram"><strong>✦ RAM: Python list</strong><pre>'+lineList(d.ram)+'</pre></div></div><div class="wisdom-code">'+esc(d.code)+'</div><div class="wisdom-insight">'+d.explain+'</div><div class="wisdom-actions"><button type="button" class="btn small" data-wisdom="prev" '+(step===0?'disabled':'')+'>← PREVIOUS</button>'+(state.wisdomDone?'<span class="wisdom-complete">✓ Knowledge unlocked!</span>':'<span class="muted">Step '+(step+1)+' of 3</span>')+'<button type="button" class="btn teal" data-wisdom="next">'+(step===2?'↺ REPLAY':'NEXT STEP →')+'</button></div><p class="wisdom-intro" style="margin-top:12px"><b>Remember:</b> Using "a" to append at the end does not require reading and rewriting the entire file. But to edit or delete specific lines, Read → Modify → Rewrite is a useful beginner-friendly pattern.</p></section>';
+}
+function bindWisdom(root,isModal){
+ root.querySelectorAll('[data-wisdom]').forEach(btn=>btn.onclick=()=>{
+  const current=Number(state.wisdomStep)||0;
+  if(btn.dataset.wisdom==='prev')state.wisdomStep=Math.max(0,current-1);
+  else if(current===2){state.wisdomDone=true;state.wisdomStep=0}
+  else{state.wisdomStep=current+1;if(state.wisdomStep===2)state.wisdomDone=true;}
+  save();
+  if(isModal)showWisdomModal();else renderQuiz();
+ });
+}
+function showWisdomModal(){
+ const root=$('modalRoot');
+ root.innerHTML='<div class="overlay" role="dialog" aria-modal="true" aria-label="The Secret of Changing Records"><div class="modal" style="max-width:850px"><button class="btn small close" id="closeWisdom">✕ Close</button>'+wisdomMarkup(state.wisdomStep||0)+'</div></div>';
+ root.querySelector('#closeWisdom').onclick=()=>root.innerHTML='';
+ root.querySelector('.overlay').onclick=e=>{if(e.target.classList.contains('overlay'))root.innerHTML=''};
+ bindWisdom(root,true);
+}
+
+function checkObservation(){
+ if(!transient||transient.selected===null)return;
+ const o=observe[transient.kind];
+ if(transient.selected!==o.answer){transient.wrong=transient.selected;transient.selected=null;renderQuiz();return}
+ transient.observed=true;transient.modeWrong=false;
+ $('pipLine').textContent='"Well spotted! Now tell me which file mode explains what happened."';renderQuiz();
+}
+function checkMode(value){
+ if(!transient?.observed||transient.answered)return;
+ if(value!==modeChallenges[state.mission].answer){transient.modeWrong=true;renderQuiz();return}
+ transient.answered=true;
+ state.history.push({mission:state.mission,kind:transient.kind,mode:value,success:transient.success,time:new Date().toISOString()});
+ if(transient.success){if(!state.completed.includes(state.mission))state.completed.push(state.mission);if(!state.notes.includes(state.mission))state.notes.push(state.mission)}
+ save();$('pipLine').textContent=transient.success?'"Excellent! You have decoded another file mode!"':'"Excellent observation! Now improve your code to finish the mission."';renderModes();renderQuiz();$('progress-fill').style.width=(state.completed.length/6*100)+'%';
+}
+function nextMission(){if(!transient?.answered||!transient.success||(state.mission===2&&!state.wisdomDone))return;state.mission++;transient=null;state.selected=state.mission<6?mission().target:null;save();if(state.mission>=6){renderFinal();return}render();$('console').textContent='A new mission awaits. Inspect the scrolls and run an experiment.';window.scrollTo({top:0,behavior:'smooth'})}
+function renderFinal(){document.querySelector('.topline').innerHTML='<div class="status"><span class="stars">✦</span> ALL SIX MISSIONS COMPLETE</div><button class="btn small" id="finalNotebook">📖 Archivist\'s Notebook</button><button class="btn small" id="finalReset">↺ Start again</button>';$('progress-fill')?.setAttribute('style','width:100%');const word=[86,69,84,95,94,65,94,68,67].map(v=>String.fromCharCode(v^23)).join('');document.querySelector('.mission-banner').innerHTML='<div class="mission-kicker">THE FINAL CHAMBER</div><h2>The Archive Is Restored!</h2><p>You have learned how to write, append, and read text files in Python.</p>';document.querySelector('.workspace').innerHTML='<div class="final" style="grid-column:1/-1"><div style="font-size:65px">🗝️</div><h2>MASTER ARCHIVIST</h2><p>The ancient doors open. Your secret code word is:</p><div class="codeword" id="codeword"></div><p>Enter this word in your Week 11 Moodle activity.</p><button class="btn primary" id="copyWord">Copy code word</button><button class="btn small" id="downloadWork">Download my Python files</button></div>'; $('codeword').textContent=word;$('copyWord').onclick=()=>{navigator.clipboard?.writeText(word).then(()=>{$('copyWord').textContent='Copied!'}).catch(()=>{window.prompt('Copy your code word:',word)})};$('downloadWork').onclick=()=>{const files={...state.files,'week11_my_code.py':state.codes[5]??missions[5].starter};const data=Object.entries(files).map(([name,content])=>'===== '+name+' =====\n'+content).join('\n\n');download('castle_archive_export.txt',data)};document.querySelector('.learning').style.display='none';$('finalNotebook').onclick=showNotebook;$('finalReset').onclick=resetAll;window.scrollTo({top:0,behavior:'smooth'})}
+function download(name,content){const blob=new Blob([content],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function showNotebook(){const root=$('modalRoot');let entries=state.notes.map(n=>'<div class="notebook-entry"><strong>CHAPTER '+(n+1)+': '+esc(missions[n].title)+'</strong><p><b>Mode '+modeChallenges[n].answer+':</b> '+esc(modeChallenges[n].why)+'</p><p>'+esc(missions[n].lesson)+'</p>'+(n===2?'<p><b>THE ARCHIVIST’S WISDOM:</b> Read the file into RAM → modify the list in RAM → open with "w" and rewrite the updated list. Mode "w" itself does NOT read the old data. Append mode "a" does not need this workflow.</p><button class="btn teal small" id="replayWisdom">↻ Replay interactive scroll</button>':'')+'</div>').join('')||'<p>No discoveries yet! Finish an experiment to add an entry.</p>';root.innerHTML='<div class="overlay" role="dialog" aria-modal="true" aria-label="Archivist Notebook"><div class="modal"><button class="btn small close" id="closeModal">✕ Close</button><h2>📖 ARCHIVIST\'S NOTEBOOK</h2><p>These are the discoveries you have earned by experimenting and answering observation questions.</p>'+entries+'<button class="btn teal" id="closeModalBottom">Return to the dungeon</button></div></div>';root.querySelector('#closeModal').onclick=()=>root.innerHTML='';root.querySelector('#closeModalBottom').onclick=()=>root.innerHTML='';root.querySelector('#replayWisdom')?.addEventListener('click',()=>{state.wisdomStep=0;save();showWisdomModal()});root.querySelector('.overlay').onclick=e=>{if(e.target.classList.contains('overlay'))root.innerHTML=''}}
+function resetAll(){if(!confirm('Reset ALL missions, files, answers, and notebook discoveries in this browser?'))return;localStorage.removeItem(KEY);location.reload()}
+function classify(before,after,target,errored){if(errored)return'error';let old=before[target],now=after[target];if(old===undefined&&now!==undefined)return'created';if(old===now)return'unchanged';if(old!==undefined&&now!==undefined&&now.startsWith(old)&&now.length>old.length)return'appended';return'overwritten'}
+function setupPyFiles(){const FS=py.FS;try{FS.mkdir('/guild')}catch(e){};FS.chdir('/guild');for(const file of FS.readdir('/guild')){if(file==='.'||file==='..')continue;try{FS.unlink('/guild/'+file)}catch(e){}}for(const [name,content] of Object.entries(state.files)){if(!/^[a-zA-Z0-9_.-]+\.txt$/.test(name))continue;FS.writeFile('/guild/'+name,content,{encoding:'utf8'})}}
+function collectPyFiles(){const FS=py.FS,files={};for(const name of FS.readdir('/guild')){if(name==='.'||name==='..'||!/^[a-zA-Z0-9_.-]+\.txt$/.test(name))continue;try{files[name]=FS.readFile('/guild/'+name,{encoding:'utf8'})}catch(e){}}return files}
+async function runCode(){if((!py&&!offlineMode)||busy||state.mission>=6)return;busy=true;$('runBtn').disabled=true;$('runBtn').textContent='⚙ RUNNING...';$('console').textContent='Running Python...';const code=$('code').value;state.codes[state.mission]=code;state.runs[state.mission]=(state.runs[state.mission]||0)+1;const before={...state.files};let output='',error='';try{if(offlineMode){const result=simulatePython(code,state.files);state.files=result.files;output=result.output;}else{setupPyFiles();py.setStdout({batched:t=>{output+=t+'\n'}});py.setStderr({batched:t=>{error+=t+'\n'}});await py.runPythonAsync(code);state.files=collectPyFiles()}}catch(e){error+=(error?'\n':'')+String(e);if(!offlineMode){try{state.files=collectPyFiles()}catch(_){}} }const kind=classify(before,state.files,mission().target,!!error);const success=!error&&!!mission().validate(state.files,output);transient={before,kind,success,answered:false,observed:false,selected:null,wrong:null,modeWrong:false};state.selected=Object.prototype.hasOwnProperty.call(state.files,mission().target)?mission().target:null;save();$('console').textContent=(output+error).trim()||'Program completed. No console output. Look at the file viewer →';$('runCount').textContent='Runs: '+state.runs[state.mission];$('pipLine').textContent=error?'"An error! Read the console, then look at the file."':'"The spell has been cast! Tell me what changed in the scroll."';renderFiles();renderQuiz();busy=false;$('runBtn').textContent='▶ RUN CODE';$('runBtn').disabled=false;}
+$('runBtn').onclick=runCode;$('code').addEventListener('input',()=>{state.codes[state.mission]=$('code').value;save()});$('code').addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();const t=e.target,start=t.selectionStart,end=t.selectionEnd;t.value=t.value.substring(0,start)+'    '+t.value.substring(end);t.selectionStart=t.selectionEnd=start+4;t.dispatchEvent(new Event('input'))}});$('restoreCodeBtn').onclick=()=>{if(confirm('Restore the starter code for this mission? Your files will not be reset.')){$('code').value=mission().starter;state.codes[state.mission]=mission().starter;save()}};document.querySelectorAll('[data-hint]').forEach(b=>b.onclick=()=>{const value=Number(b.dataset.hint);if(value>(state.hints[state.mission]||0))state.hints[state.mission]=value;save();renderHint()});$('notebookBtn').onclick=showNotebook;$('resetBtn').onclick=resetAll;
+// Offline teaching-mode interpreter: intentionally supports only the introductory
+// file I/O constructs used in this six-mission exercise. It never evaluates JS.
+function simulatePython(source,current){
+ const files={...current},env={},functions={};let output='';
+ const lines=source.replace(/\r\n?/g,'\n').split('\n');
+ const tokens=expression=>{
+   let pos=0; const tokens=[];
+   const rx=/\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\d+|[a-zA-Z_]\w*|[()+,.])\s*/y;
+   while(pos<expression.length){rx.lastIndex=pos;const m=rx.exec(expression);if(!m)throw Error('Practice mode: unsupported expression near: '+expression.slice(pos));tokens.push(m[1]);pos=rx.lastIndex}return tokens;
+ };
+ function evaluate(expr,scope){
+  const ts=tokens(expr);let i=0;
+  function atom(){let t=ts[i++];if(t===undefined)throw Error('Incomplete expression');if(t==='('){let x=add();if(ts[i++]!==')')throw Error('Expected )');return x}
+   if(/^['"]/.test(t)){return t.slice(1,-1).replace(/\\(n|t|r|\\|"|')/g,(_,v)=>({n:'\n',t:'\t',r:'\r','\\':'\\','"':'"',"'":"'"}[v]))}
+   if(/^\d+$/.test(t))return Number(t);
+   if(t==='str'&&ts[i]==='('){i++;let v=add();if(ts[i++]!==')')throw Error('Expected )');return String(v)}
+   if(t==='file'&&ts[i]==='.'&&ts[i+1]==='read'){i+=2;if(ts[i++]!=='('||ts[i++]!==')')throw Error('Expected file.read()');if(!scope.__file)throw Error('File is not open');return files[scope.__file]??''}
+   if(Object.prototype.hasOwnProperty.call(scope,t))return scope[t];
+   if(Object.prototype.hasOwnProperty.call(env,t))return env[t];
+   throw Error('NameError: name '+t+' is not defined');
+  }
+  function add(){let v=atom();while(ts[i]==='+'){i++;let right=atom();if(typeof v!==typeof right)throw Error('TypeError: cannot concatenate numbers and strings');v+=right}return v}
+  let value=add();if(i!==ts.length)throw Error('Unsupported expression: '+expr);return value;
+ }
+ function indentation(line){return (line.match(/^ */)||[''])[0].length}
+ function execute(from,to,scope={}){
+  for(let index=from;index<to;){
+   const raw=lines[index],line=raw.trim(),depth=indentation(raw);
+   if(!line||line.startsWith('#')){index++;continue}
+   if(line.startsWith('def ')){
+    const m=line.match(/^def\s+(\w+)\(([^)]*)\):$/);if(!m)throw Error('SyntaxError: invalid function definition at line '+(index+1));
+    let last=index+1;while(last<to&&(!lines[last].trim()||indentation(lines[last])>depth))last++;
+    functions[m[1]]={params:m[2].split(',').map(x=>x.trim()).filter(Boolean),start:index+1,end:last};index=last;continue;
+   }
+   if(line.startsWith('with ')){
+    const m=line.match(/^with\s+open\((.+)\)\s+as\s+(\w+)\s*:\s*$/);if(!m)throw Error('SyntaxError: expected with open(...) as file: at line '+(index+1));
+    const args=m[1].match(/^\s*(['"])(.*?)\1\s*,\s*(['"])([war])\3(?:\s*,\s*encoding\s*=\s*(['"])utf-8\5)?\s*$/);
+    if(!args)throw Error('Practice mode supports open("name.txt", "w"/"a"/"r", encoding="utf-8")');
+    const fname=args[2],mode=args[4];if(!/^[a-zA-Z0-9_.-]+\.txt$/.test(fname))throw Error('Practice mode supports simple .txt filenames');
+    if(mode==='r'&&!Object.prototype.hasOwnProperty.call(files,fname))throw Error('FileNotFoundError: '+fname);
+    if(mode==='w')files[fname]='';if(mode==='a'&&!Object.prototype.hasOwnProperty.call(files,fname))files[fname]='';
+    let last=index+1;while(last<to&&(!lines[last].trim()||indentation(lines[last])>depth))last++;
+    execute(index+1,last,{...scope,__file:fname,__handle:m[2],__mode:mode});index=last;continue;
+   }
+   let m=line.match(/^(\w+)\.write\((.*)\)$/);
+   if(m){if(m[1]!==scope.__handle||scope.__mode==='r')throw Error('Unsupported write: open the file in writing or append mode');const value=evaluate(m[2],scope);if(typeof value!=='string')throw Error('TypeError: write() argument must be str');files[scope.__file]+=value;index++;continue}
+   m=line.match(/^print\((.*)\)$/);if(m){output+=String(evaluate(m[1],scope))+'\n';index++;continue}
+   m=line.match(/^(\w+)\s*=\s*(.+)$/);if(m){const val=evaluate(m[2],scope);if(Object.prototype.hasOwnProperty.call(scope,m[1]))scope[m[1]]=val;else env[m[1]]=val;index++;continue}
+   m=line.match(/^(\w+)\((.*)\)$/);if(m&&functions[m[1]]){const f=functions[m[1]],args=m[2].split(/,(?=(?:[^'"]*['"][^'"]*['"])*[^'"]*$)/).map(x=>evaluate(x.trim(),scope));if(args.length!==f.params.length)throw Error('TypeError: wrong number of function arguments');const local={};f.params.forEach((name,k)=>local[name]=args[k]);execute(f.start,f.end,local);index++;continue}
+   throw Error('Practice mode does not support this Python statement on line '+(index+1)+': '+line);
+  }
+ }
+ execute(0,lines.length);return {files,output};
+}
+function activateOffline(reason){offlineMode=true;$('runtime-status').textContent='Practice mode · offline';$('console').textContent='Offline practice mode is ready. You can complete all six file-writing missions. This mode supports the Python commands taught here, not the full Python language.\n\n'+reason;$('runBtn').disabled=false;$('pipLine').textContent='"The magic engine is unavailable, but our training scrolls still work!"';}
+function loadScript(url,ms=6500){return new Promise((resolve,reject)=>{
+ const script=document.createElement('script');let done=false;const timer=setTimeout(()=>finish(Error('Timed out contacting '+url)),ms);
+ function finish(err){if(done)return;done=true;clearTimeout(timer);if(err){script.remove();reject(err)}else resolve()}
+ script.onload=()=>finish();script.onerror=()=>finish(Error('Could not download '+url));script.src=url;document.head.appendChild(script);
+})}
+async function start(){
+ // Keep the practice runner immediately available while the optional full Python engine loads.
+ $('runtime-status').textContent='Practice ready · connecting Python…';
+ const sources=['https://cdn.jsdelivr.net/pyodide/v0.27.7/full/','https://cdn.jsdelivr.net/npm/pyodide@0.27.7/'];
+ for(const base of sources){
+  try{
+   if(typeof loadPyodide!=='function')await loadScript(base+'pyodide.js',5500);
+   const loaded=await Promise.race([loadPyodide({indexURL:base}),new Promise((_,reject)=>setTimeout(()=>reject(Error('Python loading timed out')),10000))]);
+   py=loaded;offlineMode=false;$('runtime-status').textContent='Python ready';$('console').textContent='Python is ready. Run the code and inspect your scrolls!';$('runBtn').disabled=false;return;
+  }catch(e){console.warn('Python source unavailable:',base,e)}
+ }
+ activateOffline('The browser could not download Pyodide from the internet.');
+}
+render();if(state.mission<6){activateOffline('You can run code now. The full Python engine is loading separately if your connection allows it.');start();}
+})();
+</script>
+</body></html>
